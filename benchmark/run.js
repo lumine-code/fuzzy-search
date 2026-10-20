@@ -102,8 +102,30 @@ for (const algorithm of ["command-t", "fuzzaldrin"]) {
       return total;
     },
   );
+  measure(
+    `${algorithm}/prepared-single-highlights/100`,
+    () => new Matcher([], []),
+    (m) => {
+      let count = 0;
+      for (const text of small) {
+        const options = { algorithm, recordMatchIndexes: true };
+        if (m.matchCandidate) count += !!m.matchCandidate(text, "s", options);
+        else {
+          m.setCandidates([0], [text]);
+          count += m.match("s", options).length;
+        }
+      }
+      return count;
+    },
+  );
 }
 const hash = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
+const implementationFiles = fs.statSync(modulePath).isDirectory()
+  ? fs
+      .readdirSync(path.join(modulePath, "lib"))
+      .sort()
+      .map((name) => [name, hash(fs.readFileSync(path.join(modulePath, "lib", name)))])
+  : [[path.basename(modulePath), hash(fs.readFileSync(modulePath))]];
 fs.writeFileSync(
   output,
   JSON.stringify(
@@ -112,6 +134,8 @@ fs.writeFileSync(
       cpu: os.cpus()[0].model,
       parallelism: os.availableParallelism(),
       modulePath,
+      implementationHash: hash(JSON.stringify(implementationFiles)),
+      implementationFiles,
       corpusHash: hash(corpusBytes),
       corpusSize: source.length,
       driverHash: hash(fs.readFileSync(__filename)),

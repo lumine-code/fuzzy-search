@@ -28,8 +28,17 @@ for (const line of read("tools/unicode-17.0.0/UnicodeData.txt").split(/\r?\n/)) 
 const diacritics = {};
 for (const [character, base] of Object.entries(require("diacritic").map))
   diacritics[character.codePointAt(0)] = base.toLowerCase();
-fs.writeFileSync(
-  path.join(root, "lib/unicode-data.json"),
-  JSON.stringify({ folds, ...properties }),
-);
-fs.writeFileSync(path.join(root, "lib/diacritics-data.json"), JSON.stringify(diacritics));
+async function writeTables() {
+  const prettier = require("prettier");
+  for (const [name, data] of [
+    ["unicode-data", { folds, ...properties }],
+    ["diacritics-data", diacritics],
+  ]) {
+    const output = await prettier.format(JSON.stringify(data), { parser: "json" });
+    fs.writeFileSync(path.join(root, "lib", name + ".json"), output);
+  }
+}
+writeTables().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
