@@ -17,6 +17,19 @@ const prepareQuery = (value) => {
   return text;
 };
 
+describe("Command-T refinement after case edits", () => {
+  it("does not reuse an underflowed smart-case score after relaxing the prefix", () => {
+    const values = ["a".repeat(22) + "b"];
+    const options = { algorithm: "command-t", smartCase: true, recordMatchIndexes: true };
+    const m = matcher(values);
+    expect(m.match("A".repeat(22), options)).toEqual([]);
+    const expected = fresh(values, values[0], options);
+    expect(expected.length).toBe(1);
+    expect(expected[0].score).toBe(1);
+    expect(m.match(values[0], options)).toEqual(expected);
+  });
+});
+
 describe("Incremental Fuzzaldrin eligibility", () => {
   it("bounds retained state when score modifiers throw", () => {
     const m = matcher(Array.from({ length: 100000 }, (_, i) => `a${i}`));
