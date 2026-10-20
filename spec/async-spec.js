@@ -8,6 +8,21 @@ describe("Cooperative ranking", () => {
       values,
       { ignoreDiacritics: true },
     );
+  it("prepares scores for a worker round trip without sorting or rescoring them", async () => {
+    const matcher = create();
+    const job = await matcher.scanAsync("sample", { algorithm: "fuzzaldrin" });
+    expect(job.order).toBeNull();
+    expect(job.raw.length).toBe(values.length);
+    spyOn(job.fz, "scoreEligible").and.callThrough();
+    const options = {
+      algorithm: "fuzzaldrin",
+      scoreModifier: (score, id) => score * (1 + (id % 7)),
+    };
+    expect(await matcher.matchIdsAsync("sample", options)).toEqual(
+      create().matchIds("sample", options),
+    );
+    expect(job.fz.scoreEligible).not.toHaveBeenCalled();
+  });
   for (const algorithm of ["command-t", "fuzzaldrin"]) {
     it(`retains every result and the exact full ordering for ${algorithm}`, async () => {
       const sync = create();
@@ -32,12 +47,36 @@ describe("Cooperative ranking", () => {
     const matcher = create();
     const abort = new AbortController();
     const reason = new Error("new input");
-    setTimeout(() => abort.abort(reason), 0);
+    // Queue input on the same host task queue. Node does not guarantee whether
+    // a zero-delay timer or setImmediate runs first across platforms.
+    setImmediate(() => abort.abort(reason));
     await expectAsync(matcher.matchIdsAsync("s", {}, { signal: abort.signal })).toBeRejectedWith(
       reason,
     );
     expect(matcher.job).toBeNull();
     expect(await matcher.matchIdsAsync("sa")).toEqual(create().matchIds("sa"));
+  });
+  it("discards work cancelled after scoring has already started", async () => {
+    const matcher = create();
+    const abort = new AbortController();
+    const reason = new Error("cancel partial work");
+    let calls = 0;
+    await expectAsync(
+      matcher.matchIdsAsync(
+        "s",
+        {
+          scoreModifier(score) {
+            if (++calls === 257) abort.abort(reason);
+            return score;
+          },
+        },
+        { signal: abort.signal },
+      ),
+    ).toBeRejectedWith(reason);
+    expect(calls).toBeGreaterThanOrEqual(257);
+    expect(calls).toBeLessThan(values.length);
+    expect(matcher.job).toBeNull();
+    expect(await matcher.matchIdsAsync("s")).toEqual(create().matchIds("s"));
   });
   it("rejects a changed candidate generation and leaves the replacement intact", async () => {
     const matcher = create();
