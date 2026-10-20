@@ -7,7 +7,7 @@ const create = (values, options) =>
   );
 
 describe("Prepared query integration", () => {
-  for (const algorithm of ["command-t", "fuzzaldrin"]) {
+  for (const algorithm of ["command-t", "fuzzaldrin", "balanced"]) {
     it(`keeps top-N and ID-only results equivalent to the full ordering with ${algorithm}`, () => {
       const values = Array.from({ length: 500 }, (_, id) => `src/${id % 7}/my-file-${id}.js`);
       const matcher = create(values);

@@ -58,7 +58,7 @@ export type MatcherOptions = {
    * bonuses, basename-aware path scoring). Any other value, including the
    * default of `undefined`, selects the command-t algorithm.
    */
-  algorithm?: "fuzzaldrin" | "command-t";
+  algorithm?: "fuzzaldrin" | "command-t" | "balanced";
 
   /**
    * Whether the `"fuzzaldrin"` algorithm blends the basename score with the

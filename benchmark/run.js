@@ -15,6 +15,7 @@ const output = option("output");
 const samples = Number(option("samples", 9)),
   warmups = Number(option("warmups", 3));
 const sizes = option("sizes", "1000,10000,100000").split(",").map(Number);
+const algorithms = option("algorithms", "command-t,fuzzaldrin").split(",");
 const results = [];
 const summary = (values) => {
   const sorted = values.slice().sort((a, b) => a - b);
@@ -55,7 +56,7 @@ for (const count of sizes) {
     () => new Matcher(ids, values).match("no-such-query-987654321").length,
   );
   const threads = Math.max(1, Math.min(8, os.availableParallelism() - 1));
-  for (const algorithm of ["command-t", "fuzzaldrin"]) {
+  for (const algorithm of algorithms) {
     for (const limit of [0, 200]) {
       const options = { algorithm, numThreads: threads, maxResults: limit };
       const matcher = new Matcher(ids, values);
@@ -88,7 +89,7 @@ for (const count of sizes) {
   }
 }
 const small = source.slice(0, 100);
-for (const algorithm of ["command-t", "fuzzaldrin"]) {
+for (const algorithm of algorithms) {
   const matcher = new Matcher([0], [small[0]]);
   measure(
     `${algorithm}/single-highlights/100`,

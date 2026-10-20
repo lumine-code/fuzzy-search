@@ -67,6 +67,7 @@ for (const ignoreDiacritics of [false, true])
         const expected = native.match(q, options),
           actual = js.match(q, options);
         const byId = new Map(actual.map((r) => [r.id, r]));
+        const rankById = new Map(actual.map((r, index) => [r.id, index]));
         assert.deepEqual(
           [...byId.keys()].sort((a, b) => a - b),
           expected.map((r) => r.id).sort((a, b) => a - b),
@@ -99,6 +100,27 @@ for (const ignoreDiacritics of [false, true])
                 js: a.matchIndexes,
               });
           }
+        }
+        // Native order inside equal normalized scores is not stable (including
+        // fuzzaldrin's clipped scores). Check every strictly separated group.
+        let groupEnd = -1,
+          previousScore = Infinity;
+        for (let i = 0; i < expected.length;) {
+          const score = expected[i].score;
+          let end = i + 1;
+          while (end < expected.length && Math.abs(expected[end].score - score) <= 1e-6) end++;
+          let minimum = Infinity,
+            maximum = -1;
+          for (let j = i; j < end; j++) {
+            const rank = rankById.get(expected[j].id);
+            minimum = Math.min(minimum, rank);
+            maximum = Math.max(maximum, rank);
+          }
+          if (previousScore - score > 2e-6)
+            assert(minimum > groupEnd, `Rank inversion: ${algorithm}, ${q}, ${score}`);
+          groupEnd = Math.max(groupEnd, maximum);
+          previousScore = score;
+          i = end;
         }
       }
     }

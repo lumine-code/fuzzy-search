@@ -15,7 +15,7 @@ function values(results) {
 }
 
 describe("Unicode case matching", () => {
-  for (const algorithm of ["command-t", "fuzzaldrin"]) {
+  for (const algorithm of ["command-t", "fuzzaldrin", "balanced"]) {
     describe(algorithm, () => {
       const options = { algorithm, recordMatchIndexes: true };
 
@@ -262,7 +262,7 @@ describe("Unicode case matching", () => {
 });
 
 describe("core subsequence guard", () => {
-  for (const algorithm of ["command-t", "fuzzaldrin"]) {
+  for (const algorithm of ["command-t", "fuzzaldrin", "balanced"]) {
     it(`consumes repeated ASCII query letters once with ${algorithm}`, () => {
       const results = createMatcher(["aab", "aaa", "aaab", "baaa"]).match("aaa", {
         algorithm,
