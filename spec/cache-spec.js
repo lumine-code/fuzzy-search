@@ -51,6 +51,21 @@ describe("Prepared query integration", () => {
       expect(m.matchIds("abc", { algorithm })).toEqual([0]);
       expect(m.getMatchIndexes(1, "abc", { algorithm })).toBeNull();
     });
+    it(`keeps unchanged snapshots valid while evaluating fresh modifiers with ${algorithm}`, () => {
+      const values = ["alpha", "alphabet"];
+      const m = create(values);
+      let selected = 0;
+      const options = { algorithm, scoreModifier: (score, id) => (id === selected ? score : 0) };
+      expect(m.matchIds("al", options)).toEqual([0]);
+      m.setCandidates([0, 1], values.slice());
+      selected = 1;
+      expect(m.matchIds("al", options)).toEqual([1]);
+      m.setCandidates([1, 0, 1], ["alpha", "changed", "ignored duplicate"]);
+      const expected = new Matcher([1, 0], ["alpha", "changed"]);
+      const trace = { algorithm, recordMatchIndexes: true };
+      expect(m.match("al", trace)).toEqual(expected.match("al", trace));
+      expect(m.getMatchIndexes(0, "changed", trace)).toEqual([0, 1, 2, 3, 4, 5, 6]);
+    });
     it(`does not expose mutable cached results with ${algorithm}`, () => {
       const m = create(["abc"]);
       const options = { algorithm, recordMatchIndexes: true };

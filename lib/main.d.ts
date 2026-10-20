@@ -147,6 +147,13 @@ export class Matcher {
   /** Return ranked IDs without allocating public match objects. */
   matchIds(query: string, options?: MatcherOptions): number[];
 
+  /** Rank all matches in yielding batches; aborts reject without partial results. */
+  matchIdsAsync(
+    query: string,
+    options?: MatcherOptions,
+    control?: { signal?: AbortSignal },
+  ): Promise<number[]>;
+
   /** Compute UTF-16 highlights for an existing prepared candidate. */
   getMatchIndexes(id: number, query: string, options?: MatcherOptions): number[] | null;
 
