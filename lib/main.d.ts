@@ -58,7 +58,7 @@ export type MatcherOptions = {
    * bonuses, basename-aware path scoring). Any other value, including the
    * default of `undefined`, selects the command-t algorithm.
    */
-  algorithm?: "fuzzaldrin" | "command-t" | "balanced";
+  algorithm?: "fuzzaldrin" | "command-t";
 
   /**
    * Whether the `"fuzzaldrin"` algorithm blends the basename score with the
@@ -86,7 +86,7 @@ export type MatchResult = {
   value: string;
 
   /**
-   * A number in the range (0, 1] — i.e., the maximum value is `1` and the
+   * Without scoreModifier, a number in the range (0, 1] — the maximum value is `1` and the
    * minimum value is the smallest possible positive value. Higher scores mean
    * more relevant matches. `0` means “no match” and will never be returned.
    */

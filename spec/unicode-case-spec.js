@@ -15,7 +15,7 @@ function values(results) {
 }
 
 describe("Unicode case matching", () => {
-  for (const algorithm of ["command-t", "fuzzaldrin", "balanced"]) {
+  for (const algorithm of ["command-t", "fuzzaldrin"]) {
     describe(algorithm, () => {
       const options = { algorithm, recordMatchIndexes: true };
 
@@ -160,8 +160,8 @@ describe("Unicode case matching", () => {
         }
       });
 
-      it("preserves Unicode results across worker threads in a mixed candidate set", () => {
-        // At least 10,000 candidates are needed to exercise the native worker path.
+      it("accepts legacy thread counts without changing Unicode results", () => {
+        // This size also exercises the worker threshold in the native reference.
         const candidates = Array.from({ length: 10004 }, (_, index) => `unrelated-${index}`);
         const expectedIds = [0, 3000, 7000, 10003];
         for (const [offset, id] of expectedIds.entries()) {
@@ -262,7 +262,7 @@ describe("Unicode case matching", () => {
 });
 
 describe("core subsequence guard", () => {
-  for (const algorithm of ["command-t", "fuzzaldrin", "balanced"]) {
+  for (const algorithm of ["command-t", "fuzzaldrin"]) {
     it(`consumes repeated ASCII query letters once with ${algorithm}`, () => {
       const results = createMatcher(["aab", "aaa", "aaab", "baaa"]).match("aaa", {
         algorithm,

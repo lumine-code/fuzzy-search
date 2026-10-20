@@ -31,6 +31,7 @@ function measure(id, setup, run) {
   let count;
   for (let i = -warmups; i < samples; i++) {
     const state = setup();
+    global.gc?.();
     const start = performance.now();
     const result = run(state);
     const elapsed = performance.now() - start;
@@ -142,6 +143,7 @@ fs.writeFileSync(
       driverHash: hash(fs.readFileSync(__filename)),
       warmups,
       samples,
+      gcAfterSetup: Boolean(global.gc),
       sink,
       results,
     },

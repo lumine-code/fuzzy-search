@@ -12,6 +12,7 @@
   },
   "files": [
     "lib",
+    "docs",
     "LICENSE",
     "THIRD_PARTY_NOTICES"
   ],

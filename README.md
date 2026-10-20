@@ -2,11 +2,13 @@
 
 Ranks fuzzy matches with path scoring and Unicode-aware highlighting.
 
-JavaScript port of [lumine-code/fuzzy-native](https://github.com/lumine-code/fuzzy-native), preserving its Command-T and fuzzaldrin scoring contracts.
+Fork of [lumine-code/fuzzy-native](https://github.com/lumine-code/fuzzy-native), ported to JavaScript while preserving its Command-T and fuzzaldrin scoring contracts.
+
+Lumine currently retains native matching after the [performance evaluation](docs/performance.md). This library remains available as a standalone port; its name does not imply a universal speed advantage.
 
 ## Features
 
-- **Ranking**: supports Command-T, fuzzaldrin and a balanced alignment policy for interactive lists.
+- **Ranking**: supports Command-T and fuzzaldrin with path and extension bonuses.
 - **Unicode**: uses pinned Unicode 17 simple case folding and original UTF-16 highlight offsets.
 - **Prepared candidates**: reuses normalization and structural metadata across queries.
 - **Query reuse**: caches scores and ordering for recent queries and narrows compatible refinements.
@@ -27,8 +29,6 @@ const results = matcher.match("strasse", {
 ```
 
 `match`, `setCandidates`, `addCandidates` and `removeCandidates` retain the native library's API. `matchIds(query, options)` returns only the ranked IDs. `getMatchIndexes(id, query, options)` highlights an already prepared candidate, returning `null` for a missing candidate or non-match. `scoreModifier(score, id)` adjusts normalized scores before selection and sorting; it runs again on every request because application state can change independently of the query. It must not mutate or reenter the matcher.
-
-The optional `balanced` algorithm uses two rolling alignment rows, word-boundary and consecutive bonuses, gap penalties and a basename preference. It changes ranking relative to fuzzaldrin, keeps the same required-character eligibility and Unicode normalization, and returns the chosen alignment as its highlights. Command-T remains the library default; fuzzaldrin remains available for callers requiring its ranking. `caseSensitive`, `smartCase` and `maxGap` apply to Command-T; `useExtensionBonus` applies to fuzzaldrin.
 
 Matching is synchronous and runs on the calling JavaScript thread. The legacy `numThreads` option is accepted but does not create workers. Scores and rankings retain native single-precision arithmetic where it determines alignment. Exact score ties use candidate length and then numeric ID for deterministic ordering.
 
