@@ -1,4 +1,4 @@
-# fast-fuzzy
+# fuzzy-search
 
 Ranks fuzzy matches with path scoring and Unicode-aware highlighting.
 
@@ -18,7 +18,7 @@ The [performance evaluation](docs/performance.md) records the native comparison 
 ## Usage
 
 ```js
-const { Matcher } = require("@lumine-code/fast-fuzzy");
+const { Matcher } = require("@lumine-code/fuzzy-search");
 const matcher = new Matcher([0, 1], ["src/main.js", "Straße"], {
   ignoreDiacritics: true,
 });

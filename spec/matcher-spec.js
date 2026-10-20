@@ -13,7 +13,7 @@ function genIds(values) {
   return [Array.from({ length: values.length }, (_, i) => i), values];
 }
 
-describe("fuzzy-native", function () {
+describe("fuzzy-search", function () {
   /** @type {import('../lib/main').Matcher} */
   let matcher;
   beforeEach(function () {

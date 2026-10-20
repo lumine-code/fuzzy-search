@@ -1,5 +1,5 @@
 {
-  "name": "@lumine-code/fast-fuzzy",
+  "name": "@lumine-code/fuzzy-search",
   "author": "lumine-code",
   "version": "1.0.0",
   "description": "Ranks fuzzy matches with path scoring and Unicode-aware highlighting.",
@@ -24,8 +24,8 @@
     "paths",
     "lumine"
   ],
-  "repository": "https://github.com/lumine-code/fast-fuzzy",
-  "bugs": "https://github.com/lumine-code/fast-fuzzy/issues",
+  "repository": "https://github.com/lumine-code/fuzzy-search",
+  "bugs": "https://github.com/lumine-code/fuzzy-search/issues",
   "license": "MIT",
   "engines": {
     "node": ">=24"
