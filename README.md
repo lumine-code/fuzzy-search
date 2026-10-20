@@ -4,7 +4,7 @@ Ranks fuzzy matches with path scoring and Unicode-aware highlighting.
 
 Fork of [lumine-code/fuzzy-native](https://github.com/lumine-code/fuzzy-native), ported to JavaScript while preserving its Command-T and fuzzaldrin scoring contracts.
 
-Lumine currently retains native matching after the [performance evaluation](docs/performance.md). This library remains available as a standalone port; its name does not imply a universal speed advantage.
+The [performance evaluation](docs/performance.md) records the native comparison and the subsequent refinement optimizations.
 
 ## Features
 
@@ -32,7 +32,9 @@ const results = matcher.match("strasse", {
 
 Matching is synchronous and runs on the calling JavaScript thread. The legacy `numThreads` option is accepted but does not create workers. Scores and rankings retain native single-precision arithmetic where it determines alignment. Exact score ties use candidate length and then numeric ID for deterministic ordering.
 
-Candidate mutations invalidate query caches. Up to eight prepared queries retain at most eight MiB of score and ordering arrays; query workspaces and candidate metadata are additional. Each query can reuse at most 2048 basename scores covering 65536 UTF-16 units. The one-text API retains at most 128 texts covering 65536 UTF-16 units. Queries longer than 256 UTF-16 units are not retained in the recent-query cache.
+Candidate mutations invalidate query caches. Up to eight prepared queries retain at most eight MiB of score, eligibility and ordering arrays; query workspaces and candidate metadata are additional. Each query can reuse at most 2048 basename scores covering 65536 UTF-16 units. The one-text API retains at most 128 texts covering 65536 UTF-16 units. Queries longer than 256 UTF-16 units are not retained in the recent-query cache.
+
+Candidate folding, separator normalization and path metadata are prepared once when candidates are added. A compatible query extension reuses the earliest feasible end of its required-character subsequence solely to check eligibility. It recalculates the complete Fuzzaldrin score and highlight alignment; the best-scoring previous alignment is never used as a rejection boundary.
 
 See `lib/main.d.ts` for options and result types. Run `npm test` for correctness and `node benchmark/run.js --module <implementation> --corpus <paths.json> --output <report.json>` for isolated performance measurements. The corpus is a JSON array of file paths. Supply a native `.node` reference explicitly to `benchmark/differential.js` when comparing against the previous implementation.
 
