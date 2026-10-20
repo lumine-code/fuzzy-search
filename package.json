@@ -1,0 +1,42 @@
+{
+  "name": "@lumine-code/fast-fuzzy",
+  "author": "lumine-code",
+  "version": "1.0.0",
+  "description": "Ranks fuzzy matches with path scoring and Unicode-aware highlighting.",
+  "main": "lib/main.js",
+  "types": "lib/main.d.ts",
+  "scripts": {
+    "test": "jasmine",
+    "lint": "eslint . --max-warnings 0 && prettier --check .",
+    "format": "prettier --write ."
+  },
+  "files": [
+    "lib",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES"
+  ],
+  "keywords": [
+    "fuzzy",
+    "matching",
+    "ranking",
+    "unicode",
+    "paths",
+    "lumine"
+  ],
+  "repository": "https://github.com/lumine-code/fast-fuzzy",
+  "bugs": "https://github.com/lumine-code/fast-fuzzy/issues",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "diacritic": "^0.0.2",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-n": "^18.4.1",
+    "globals": "^17.13.0",
+    "jasmine": "^7.0.0",
+    "prettier": "^3.9.9"
+  }
+}
