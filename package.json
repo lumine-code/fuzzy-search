@@ -1,7 +1,7 @@
 {
   "name": "@lumine-code/fuzzy-search",
   "author": "lumine-code",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Ranks fuzzy matches with path scoring and Unicode-aware highlighting.",
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
