@@ -28,6 +28,19 @@ describe("Command-T refinement after case edits", () => {
     expect(expected[0].score).toBe(1);
     expect(m.match(values[0], options)).toEqual(expected);
   });
+
+  it("checks original case even when diacritic preparation folds query characters", () => {
+    const values = ["K".repeat(22) + "b"];
+    const constructor = { ignoreDiacritics: true };
+    const options = { algorithm: "command-t", smartCase: true, recordMatchIndexes: true };
+    const m = matcher(values, constructor);
+    expect(m.match("K".repeat(22), options)).toEqual([]);
+    const query = "k".repeat(22) + "b";
+    const expected = fresh(values, query, options, constructor);
+    expect(expected.length).toBe(1);
+    expect(expected[0].score).toBe(1);
+    expect(m.match(query, options)).toEqual(expected);
+  });
 });
 
 describe("Incremental Fuzzaldrin eligibility", () => {
