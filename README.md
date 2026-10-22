@@ -36,6 +36,8 @@ Candidate mutations invalidate query caches; setting the identical ordered IDs a
 
 Candidate folding, separator normalization and path metadata are prepared once when candidates are added. A compatible query extension reuses the earliest feasible end of its required-character subsequence solely to check eligibility. It recalculates the complete Fuzzaldrin score and highlight alignment; the best-scoring previous alignment is never used as a rejection boundary.
 
+Command-T uses approximate scoring when candidate length multiplied by query length reaches 10000 code points. The approximation honors `maxGap` and smart-case penalties; bounded-gap matching may select an earlier feasible alignment instead of the latest unrestricted one. Approximate zero scores are never used to reject query refinements. The [correctness review](docs/review-2026-10-22.md) documents the repaired edge cases and regression coverage.
+
 See `lib/main.d.ts` for options and result types. Run `npm test` for correctness and `node benchmark/run.js --module <implementation> --corpus <paths.json> --output <report.json>` for isolated performance measurements. The corpus is a JSON array of file paths. Supply a native `.node` reference explicitly to `benchmark/differential.js` when comparing against the previous implementation.
 
 ## Contributing
