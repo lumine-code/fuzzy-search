@@ -6,6 +6,8 @@ Fork of [lumine-code/fuzzy-native](https://github.com/lumine-code/fuzzy-native),
 
 The [performance evaluation](docs/performance.md) records the native comparison and the subsequent refinement optimizations.
 
+The [query state review](docs/review-round2-2026-10-22.md) covers cached option ownership and SelectList callback/recovery fixes.
+
 ## Features
 
 - **Ranking**: supports Command-T and fuzzaldrin with path and extension bonuses.
