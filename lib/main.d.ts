@@ -8,8 +8,8 @@ export type MatcherOptions = {
    * bonus). Case-insensitive matching uses locale-independent Unicode 17
    * simple case folding, preserving accents and keeping `ß` distinct from
    * `ss` and `İ` distinct from `i`. Defaults to `false`.
-   * Constructor-level `ignoreDiacritics` preprocessing runs first and may
-   * already lowercase mapped characters before case-sensitive comparison.
+   * Constructor-level `ignoreDiacritics` preprocessing runs first and
+   * preserves letter case and camelCase boundaries.
    */
   caseSensitive?: boolean;
 
@@ -110,8 +110,8 @@ export type MatchResult = {
  */
 export type MatcherConstructorOptions = {
   /**
-   * When `true`, candidates and queries are folded to a lowercase,
-   * diacritic-free ASCII form before matching, so e.g. `"cafe"` matches
+   * When `true`, mapped accents in candidates and queries are transliterated
+   * to ASCII while preserving case, so e.g. `"cafe"` matches
    * `"café"`. Reported `matchIndexes` are mapped back to offsets in the
    * original (accented) `value`. Must be set at construction because each
    * candidate's folded form is precomputed when it is added. Defaults to

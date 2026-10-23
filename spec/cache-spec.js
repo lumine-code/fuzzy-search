@@ -96,7 +96,9 @@ describe("Prepared query integration", () => {
   it("keeps smart case based on the original query before diacritic expansion", () => {
     const m = create(["ßKk"], { ignoreDiacritics: true });
     const result = m.match("K", { smartCase: true, recordMatchIndexes: true });
-    expect(result[0].matchIndexes).toEqual([2]);
+    // Accent folding retains the uppercase Kelvin sign's case; the trailing
+    // lowercase k must not displace the same-case match.
+    expect(result[0].matchIndexes).toEqual([1]);
   });
   it("validates mutations before changing the candidate set", () => {
     const m = create(["abc"]);
