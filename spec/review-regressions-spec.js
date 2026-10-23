@@ -92,6 +92,31 @@ describe("Long Command-T inputs", () => {
   });
 });
 
+describe("Long Fuzzaldrin highlights", () => {
+  for (const suffix of ["", "-"]) {
+    it(`highlights required letters when an optional prefix is missing or too late (${suffix || "missing"})`, () => {
+      const query = "-" + "a".repeat(100);
+      const value = "a".repeat(43000) + suffix;
+      const matcher = new Matcher([0], [value]);
+      const options = { algorithm: "fuzzaldrin", recordMatchIndexes: true };
+      const result = matcher.match(query, options);
+      expect(result.length).toBe(1);
+      const expected = Array.from({ length: 100 }, (_, i) => i);
+      expect(result[0].matchIndexes).toEqual(expected);
+      expect(matcher.getMatchIndexes(0, query, options)).toEqual(expected);
+      expect(matcher.matchCandidate(value, query, options).matchIndexes).toEqual(expected);
+    });
+  }
+
+  it("still highlights optional characters for a punctuation-only query", () => {
+    const query = "-".repeat(100);
+    const matcher = new Matcher([0], ["-".repeat(43000)]);
+    expect(matcher.getMatchIndexes(0, query, { algorithm: "fuzzaldrin" })).toEqual(
+      Array.from({ length: 100 }, (_, i) => i),
+    );
+  });
+});
+
 describe("Seeded matcher state transitions", () => {
   it("matches fresh instances through edits, cache pressure, mutations and concurrent requests", async () => {
     let seed = 0x20261022;
