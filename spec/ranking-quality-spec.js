@@ -8,6 +8,19 @@ const create = (values, ignoreDiacritics = false) =>
   );
 
 describe("Fuzzy ranking quality", () => {
+  it("keeps long overlapping literal scores when case recounts are skipped", () => {
+    for (const letter of ["a", "A"]) {
+      const matcher = create([letter.repeat(10000)]);
+      matcher.match(letter.repeat(1000), { algorithm: "fuzzaldrin" });
+      expect(matcher.job.raw[0]).toBe(4996865024);
+    }
+    const query = "Abc".repeat(16);
+    const matcher = create([query.toLowerCase() + " " + query]);
+    const onlyLater = create(["x".repeat(query.length) + " " + query]);
+    expect(matcher.match(query, { algorithm: "fuzzaldrin" })[0].score).toBe(
+      onlyLater.match(query, { algorithm: "fuzzaldrin" })[0].score,
+    );
+  });
   for (const ignoreDiacritics of [false, true]) {
     it(`finds a better third literal occurrence with accent folding ${ignoreDiacritics}`, () => {
       const matcher = create(["afoo afoo foo", "axxx axxx foo"], ignoreDiacritics);
