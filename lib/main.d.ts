@@ -40,6 +40,14 @@ export type MatcherOptions = {
   scoreModifier?: (score: number, id: number) => number;
 
   /**
+   * Opt into caching adjusted scores and ordering for this modifier function
+   * and version. Change the version when captured state changes. Without a
+   * version the callback runs on every request. Candidate changes invalidate
+   * cached scores regardless of the version.
+   */
+  scoreModifierVersion?: string | number;
+
+  /**
    * Whether to return metadata about the indices of the characters that
    * matched in each returned max. Defaults to `false`.
    */

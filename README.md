@@ -2,7 +2,7 @@
 
 Ranks fuzzy matches with path scoring and Unicode-aware highlighting.
 
-Fork of [lumine-code/fuzzy-native](https://github.com/lumine-code/fuzzy-native), ported to JavaScript while preserving its Command-T and fuzzaldrin scoring contracts.
+Fork of [lumine-code/fuzzy-native](https://github.com/lumine-code/fuzzy-native), ported to JavaScript with Command-T and fuzzaldrin scoring.
 
 The [performance evaluation](docs/performance.md) records the native comparison and the subsequent refinement optimizations.
 
@@ -30,7 +30,9 @@ const results = matcher.match("strasse", {
 });
 ```
 
-`match`, `setCandidates`, `addCandidates` and `removeCandidates` retain the native library's API. `matchIds(query, options)` returns only the ranked IDs. `getMatchIndexes(id, query, options)` highlights an already prepared candidate, returning `null` for a missing candidate or non-match. `scoreModifier(score, id)` adjusts normalized scores before selection and sorting; it runs again on every request because application state can change independently of the query. It must not mutate or reenter the matcher.
+`match`, `setCandidates`, `addCandidates` and `removeCandidates` retain the native library's API. `matchIds(query, options)` returns only the ranked IDs. `getMatchIndexes(id, query, options)` highlights an already prepared candidate, returning `null` for a missing candidate or non-match. `scoreModifier(score, id)` adjusts normalized scores before selection and sorting; it must not mutate or reenter the matcher. Without `scoreModifierVersion` it runs again on every request. Supply a string or numeric version to cache adjusted scores and ordering for the same function, query and candidate snapshot; advance that version whenever state captured by the callback changes. Changing limits or root tie-breaking can reuse the adjusted scores. Retained score arrays count against the existing query-cache memory limit.
+
+Accent-insensitive preparation preserves letter case, camelCase boundaries and original highlight offsets. Case-sensitive and smart-case comparisons therefore remain effective with `ignoreDiacritics: true`. Fuzzaldrin compares all literal occurrences before choosing their best score, so repeated substrings cannot hide a later whole-word match. These ranking improvements intentionally differ from the original native implementation.
 
 `match` and `matchIds` are synchronous. `await matchIdsAsync(query, options, {signal})` ranks the complete result set in yielding batches on the calling thread, including sorting; it does not limit the results or create workers. An aborted request rejects without publishing partial results or a partial score cache. Candidate replacement during a request also rejects it. Callbacks run on the calling thread and must be pure because a cancelled request may stop partway through them. A six-millisecond scheduling budget is a target, not a hard deadline for arbitrary callbacks or individual candidates. The legacy `numThreads` option is accepted but does not create workers. Scores and rankings retain native single-precision arithmetic where it determines alignment. Exact score ties use candidate length and then numeric ID for deterministic ordering.
 
