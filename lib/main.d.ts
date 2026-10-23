@@ -147,7 +147,7 @@ export class Matcher {
   /** Return ranked IDs without allocating public match objects. */
   matchIds(query: string, options?: MatcherOptions): number[];
 
-  /** Rank all matches in yielding batches; aborts reject without partial results. */
+  /** Rank all matches in yielding batches using options captured at invocation; aborts reject without partial results. */
   matchIdsAsync(
     query: string,
     options?: MatcherOptions,
